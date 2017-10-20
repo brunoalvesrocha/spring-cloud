@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/eureka-service/eureka-service.iml" filepath="$PROJECT_DIR$/eureka-service/eureka-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hello-client/hello-client.iml" filepath="$PROJECT_DIR$/hello-client/hello-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hello-server/hello-server.iml" filepath="$PROJECT_DIR$/hello-server/hello-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/spring-cloud-eureka-and-hystrix-example-master.iml" filepath="$PROJECT_DIR$/.idea/spring-cloud-eureka-and-hystrix-example-master.iml" />
+    </modules>
+  </component>
+</project>

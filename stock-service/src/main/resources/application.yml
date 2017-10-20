@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: stock-service
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+server:
+  port: 0
+
+control:
+  access:
+    eureka:
+      credentials:
+        user: eureka
+        pass: eureka
+
+eureka:
+  instance:
+    hostname: localhost
+    securePort: 8302
+    instanceId: ${spring.application.name}:${random.int}
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    registry-fetch-interval-seconds: 10
+    service-url:
+      defaultZone: http://${control.access.eureka.credentials.user}:${control.access.eureka.credentials.pass}@${eureka.instance.hostname}:${eureka.instance.securePort}/eureka/
+
+# Increase the Hystrix timeout to 60s (for all)
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
+
+db-service:
+  ribbon:
+    ServerListRefreshInterval: 15000
+
+
+endpoints:
+  restart:
+    enabled: true
+  shutdown:
+    enable: true
+  health:
+    sensitive: false

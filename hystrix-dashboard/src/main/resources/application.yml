@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: hystrix-dashboard
+
+control:
+  access:
+    eureka:
+      credentials:
+        user: eureka
+        pass: eureka
+eureka:
+  instance:
+    hostname: localhost
+    securePort: 8302
+    instanceId: ${spring.application.name}:${random.int}
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    registry-fetch-interval-seconds: 10
+    service-url:
+      defaultZone: http://${control.access.eureka.credentials.user}:${control.access.eureka.credentials.pass}@${eureka.instance.hostname}:${eureka.instance.securePort}/eureka/
+
