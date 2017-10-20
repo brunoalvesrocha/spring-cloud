@@ -1,10 +1,0 @@
-
-T
-squid:S106"9Replace this use of System.out or System.err by a logger.(éæŠ÷8›ñ‰œí+
-nsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ïßîö8ò¿‚œí+
-msquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(­æµ8ò¿‚œí+
-¢%squid:RedundantThrowsDeclarationCheck"lRemove the declaration of thrown exception 'java.io.IOException', as it cannot be thrown from method's body.(œû¿Ø8ŸÚŠœí+
-1squid:S1220""Move this file to a named package.
-ssquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(©ó²Ãþÿÿÿÿ8ò¿‚œí+
-]squid:UselessImportCheck"/Remove this unused import 'java.io.FileWriter'.(Ã‘ÅÃýÿÿÿÿ8õ÷¬›í+
-[squid:UselessImportCheck"3Remove this unused import 'java.io.BufferedWriter'.(¬õº/8õ÷¬›í+
