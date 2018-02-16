@@ -35,10 +35,10 @@ eureka:
       defaultZone: http://${control.access.eureka.credentials.user}:${control.access.eureka.credentials.pass}@${eureka.instance.hostname}:${eureka.instance.securePort}/eureka/
 
 ## Increase the Hystrix timeout to 60s (for all)
-hystrix:
-  command:
-    default:
-      execution:
-        isolation:
-          thread:
-            timeoutInMilliseconds: 30000
+#hystrix:
+#  command:
+ #   default:
+  #    execution:
+   #     isolation:
+    #      thread:
+     #       timeoutInMilliseconds: 30000
