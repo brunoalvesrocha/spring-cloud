@@ -41,6 +41,8 @@ eureka:
     register-with-eureka: false
     fetch-registry: false
     server:
+    instance:
+      preferIpAddress: true	
       enable-self-preservation: true
     service-url:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
