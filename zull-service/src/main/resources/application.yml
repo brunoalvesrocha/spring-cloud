@@ -15,7 +15,6 @@ zuul:
     stock-service:
       path: /stock/**
       servicId: STOCK-SERVICE
-
 control:
   access:
     eureka:
@@ -42,4 +41,4 @@ hystrix:
       execution:
         isolation:
           thread:
-            timeoutInMilliseconds: 60000
+            timeoutInMilliseconds: 30000

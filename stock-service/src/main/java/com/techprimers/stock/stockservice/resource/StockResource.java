@@ -13,18 +13,27 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author brunorocha
@@ -32,9 +41,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/rest/stock")
 public class StockResource {
-
-    @Autowired
-    RestTemplate restTemplate;
 
     @Autowired
     EurekaClient eurekaClient;
@@ -54,40 +60,50 @@ public class StockResource {
         final String serviceId = serviceInstance.getInstanceId();
 
         log.fatal("--------> CALL FROM SERVER: " + serviceId);
+
         List<String> userQuotes = dbServiceClient.usersQuotes(username);
         return userQuotes.stream()
                 .map(quote -> {
                     Stock stock = getStockPrice(quote);
+                    if(Objects.isNull(stock.getQuote())) {
+                        return new Quote(quote, new BigDecimal(0));
+                    }
                     return new Quote(quote, stock.getQuote().getPrice());
                 }).collect(Collectors.toList());
-
     }
 
-//    @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-//    public ResponseEntity<?> addQuote(@RequestBody final QuotesUser quotesUser) {
-//        checkNotNull(quotesUser, "The user cannot be null");
-//
-//        final ServiceInstance serviceInstance = loadBalancer.choose("db-service");
-//
-//        final String serviceId = serviceInstance.getServiceId();
-//        final int port = serviceInstance.getPort();
-//
-//        final String baseUrl = "http://" + serviceId + ":" + port + "/rest/db/add";
-//        log.info(baseUrl);
-//
-//        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-//        restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
-//
-//        ResponseEntity<String> response = restTemplate.exchange(
-//                baseUrl,
-//                HttpMethod.POST,
-//                new HttpEntity<>(quotesUser), String.class
-//        );
-//
-//        log.info("Adding new user quote for: " + quotesUser.getUserName());
-//
-//        return new ResponseEntity<>(response.getBody(), response.getStatusCode());
-//    }
+//    @HystrixCommand(fallbackMethod = "fallbackAddQuote")
+    @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public List<Quote> addQuote(@RequestBody final QuotesUser quotesUser, HttpServletResponse response) {
+        checkNotNull(quotesUser, "The user cannot be null");
+
+        Application application = eurekaClient.getApplication("db-service");
+        InstanceInfo serviceInstance = application.getInstances().get(0);
+
+        final String serviceId = serviceInstance.getInstanceId();
+
+        log.fatal("--------> CALL FROM SERVER: " + serviceId);
+
+        setHeaderResponse(response);
+
+        return dbServiceClient.addQuotes(quotesUser)
+                .stream()
+                .map(quote -> {
+                    Stock stock = getStockPrice(quote);
+                    if(Objects.isNull(stock.getQuote())) {
+                        return new Quote(quote, new BigDecimal(0));
+                    }
+                    return new Quote(quote, stock.getQuote().getPrice());
+                }).collect(Collectors.toList());
+    }
+
+    private void setHeaderResponse(HttpServletResponse response) {
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{codigo}")
+                .buildAndExpand(123456).toUri();
+
+
+        response.setHeader("Location", uri.toASCIIString());
+    }
 
     private static HttpEntity<?> getHeaders() throws IOException {
         HttpHeaders headers = new HttpHeaders();
@@ -99,11 +115,15 @@ public class StockResource {
         return Arrays.asList(new Quote(username, new BigDecimal(0)));
     }
 
+    public List<Quote> fallbackAddQuote(@RequestBody final QuotesUser quotesUser) {
+        return Arrays.asList(new Quote(quotesUser.getUserName(), new BigDecimal(0)));
+    }
+
     private Stock getStockPrice(String quote) {
         try {
-            return YahooFinance.get(quote);
+            Stock stock = YahooFinance.get(quote);
+            return stock;
         } catch (IOException e) {
-            e.printStackTrace();
             return new Stock(quote);
         }
     }
@@ -170,4 +190,7 @@ interface DbServiceClient {
 
     @RequestMapping("/rest/db/{name}")
     List<String> usersQuotes(@RequestParam("name") String name);
+
+    @PostMapping("/rest/db/add")
+    List<String> addQuotes(@RequestBody final QuotesUser quotesUser);
 }
