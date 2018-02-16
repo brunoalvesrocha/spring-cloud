@@ -1,3 +1,5 @@
+server:
+  port: 8085
 spring:
   application:
     name: hystrix-dashboard
@@ -19,4 +21,12 @@ eureka:
     registry-fetch-interval-seconds: 10
     service-url:
       defaultZone: http://${control.access.eureka.credentials.user}:${control.access.eureka.credentials.pass}@${eureka.instance.hostname}:${eureka.instance.securePort}/eureka/
+turbine:
+  app-config: stock-service
+  aggregator:
+    clusterConfig: STOCK-SERVICE
+
+
+
+
 
