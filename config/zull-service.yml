@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: zuul-service
+
+server:
+  port: 8079
+
+zuul:
+  #Service will be mapped under the /api URI
+  prefix: /api
+  routes:
+    db-service:
+      path: /db/**
+      serviceId: DB-SERVICE
+    stock-service:
+      path: /stock/**
+      servicId: STOCK-SERVICE
+control:
+  access:
+    eureka:
+      credentials:
+        user: eureka
+        pass: eureka
+
+eureka:
+  instance:
+    hostname: localhost
+    securePort: 8302
+    instanceId: ${spring.application.name}:${random.int}
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    registry-fetch-interval-seconds: 10
+    service-url:
+      defaultZone: http://${control.access.eureka.credentials.user}:${control.access.eureka.credentials.pass}@${eureka.instance.hostname}:${eureka.instance.securePort}/eureka/
+
+## Increase the Hystrix timeout to 60s (for all)
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 30000
