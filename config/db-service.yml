@@ -36,7 +36,7 @@ eureka:
   client:
     fetch-registry: true
     register-with-eureka: true
-    registry-fetch-interval-seconds: 10
+    registry-fetch-interval-seconds: 5
     service-url:
       defaultZone: http://${control.access.eureka.credentials.user}:${control.access.eureka.credentials.pass}@${eureka.instance.hostname}:${eureka.instance.securePort}/eureka/
 
