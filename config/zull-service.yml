@@ -38,10 +38,10 @@ eureka:
 
 
 ## Increase the Hystrix timeout to 60s (for all)
-#hystrix:
-#  command:
- #   default:
-  #    execution:
-   #     isolation:
-    #      thread:
-     #       timeoutInMilliseconds: 30000
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 30000
