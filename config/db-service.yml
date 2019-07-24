@@ -13,6 +13,7 @@ spring:
       validation-query: SELECT 1
   jpa:
     database: mysql
+    useSSL=true
     show-sql: true
     hibernate:
       ddl-auto: update
